@@ -1,5 +1,4 @@
-
---Part C. Creating the detailed and summary tables with their respective columns. 
+-- Creating the detailed and summary tables with their respective columns. 
 CREATE TABLE summary_table (
     store_weekday_id VARCHAR(20) NOT NULL,
     rental_weekday VARCHAR(20),
@@ -20,7 +19,7 @@ CREATE TABLE detailed_table (
     FOREIGN KEY (store_weekday_id) REFERENCES summary_table(store_weekday_id)
 );
 
--- Part D. To extract raw data for the detailed table from the rental table.
+-- Extracting raw data for the detailed table from the rental table.
 INSERT INTO detailed_table (rental_id, rental_date, staff_id, rental_weekday)
 SELECT rental.rental_id, rental.rental_date, rental.staff_id, To_Char(rental.rental_date, 'Day')
 FROM rental;
@@ -51,7 +50,7 @@ UPDATE detailed_table
 SET store_weekday_id = CONCAT(detailed_table.store_id, detailed_table.rental_weekday);
 
 
---Part E. Creating a function
+-- Creating a function
 CREATE FUNCTION populate()
     RETURNS TRIGGER
     LANGUAGE PLPGSQL
@@ -83,7 +82,7 @@ RETURN NEW;
 END;
 $$
 
---Create a trigger after creating the function.
+-- Create a trigger after creating the function.
 CREATE TRIGGER calculate 
     AFTER UPDATE
     ON detailed_table
@@ -91,7 +90,7 @@ CREATE TRIGGER calculate
     EXECUTE PROCEDURE populate()
 
 
---Part F: Create stored procedure.
+-- Create stored procedure.
 CREATE PROCEDURE refresh_tables()
 LANGUAGE PLPGSQL
 AS $$
@@ -157,9 +156,8 @@ ORDER BY address, rental_count DESC;
 
 
 
-
-
------------------------------------------------------------------------
+-------------------------------------------------------------------------------------------
+-- To delete the created procedure, trigger, function, and tables, tun the following lines.
 DROP PROCEDURE refresh_tables;
 DROP trigger calculate on detailed_table;
 DROP function populate;
